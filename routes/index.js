@@ -12,5 +12,7 @@ router.post('/', homeController.post)
 router.get('/login', loginController.get);
 router.post('/login', loginController.post)
 router.get('/admin', adminController.get);
+router.post('/admin/upload', adminController.upload);
+router.post('/admin/skills', adminController.addSkills)
 
 module.exports = router;
