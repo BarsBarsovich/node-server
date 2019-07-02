@@ -13,8 +13,15 @@ router.get('/', async (ctx) => {
   ctx.render('index');
 });
 
-router.post('/', async () => {
-  homeController.post
+
+router.post('/', async (ctx) => {
+  console.log(ctx.request.body);
+  try {
+    await homeController.save(ctx.request.body);
+    ctx.render('index');
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 
@@ -23,19 +30,12 @@ router.get('/login', async (ctx) => {
 });
 
 router.post('/login', async (ctx) => {
-  console.log('Test1',this.req.body);
-
-  ctx.render('login');
-
-
-  // const {email, password} = ctx.header;
-  // try {
-  //   dbWorker.saveLogin(email, password);
-  //   ctx.render('login');
-  // } catch (e) {
-  //   console.log(e);
-  //   ctx.render('login');
-  // }
+  try {
+    await loginController.saveLogin(ctx.request.body);
+    ctx.render('login');
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.get('/admin', async (ctx) => {
@@ -43,11 +43,25 @@ router.get('/admin', async (ctx) => {
 });
 
 router.post('/admin/upload', async (ctx) => {
-  adminController.upload
+  console.log(ctx.request.files);
+  try{
+    adminController.upload({...ctx.request.files, ...ctx.request.body});
+    ctx.render('admin');
+
+  }catch(err){
+    console.log(err);
+  }
 });
 
 router.post('/admin/skills', async (ctx) => {
-  adminController.addSkills
+  console.log(ctx.request.body)
+  try {
+    adminController.addSkills(ctx.request.body);
+    ctx.render('admin');
+  } catch (err) {
+    console.log(err);
+  }
+
 });
 
 module.exports = router;
