@@ -1,34 +1,93 @@
 const fs = require('fs');
 const path = require('path');
+const skillsWorker = require('./skillWorker');
+const uploader = require('./uploaderWorker');
 
 module.exports.saveMessage = function (name, email, message) {
-  const dbPath = path.join(process.cwd(), 'db', 'message.json');
-  if (fs.existsSync(dbPath)) {
-    // если файлик существует, то надо дописать
-    console.log('File Appended');
+  try {
+    const dbFolder = path.join(process.cwd(), 'db');
+    const dbPathFile = path.join(dbFolder, 'message.json');
 
-    const fileContent =fs.readFileSync(dbPath, 'utf8');
-    if (fileContent === ''){
-      fs.writeFileSync(dbPath, `{"Users":[{"name":"${name}", "email":"${email}", "message": "${message}"}]}`);
-      return;
+    console.log('DbFolder', dbFolder);
+    if (!fs.existsSync(dbFolder)) {
+      fs.mkdirSync(dbFolder);
     }
-    const dbEntity = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-    let dbTextContent = '{"Users":[';
-    Array.from(dbEntity['Users']).map(item => {
-      dbTextContent += `{"name":"${item.name}", "email":"${item.email}", "message": "${item.message}"}`;
-    });
+    if (fs.existsSync(dbPathFile)) {
+      // если файлик существует, то надо дописать    
+      const fileContent = fs.readFileSync(dbPathFile, 'utf8');
+      if (fileContent === '') {
+        fs.writeFileSync(dbPathFile, `{"Users":[{"name":"${name}", "email":"${email}", "message": "${message}"}]}`);
+        return;
+      }
+      const dbEntity = JSON.parse(fs.readFileSync(dbPathFile, 'utf8'));
+      let dbTextContent = '{"Users":[';
+      Array.from(dbEntity['Users']).map(item => {
+        dbTextContent += `{"name":"${item.name}", "email":"${item.email}", "message": "${item.message}"},`;
+      });
 
-    dbTextContent += `,{"name":"${name}", "email":"${email}", "message": "${message}"} ]}`;
-    fs.writeFileSync(dbPath, dbTextContent);
+      dbTextContent += `{"name":"${name}", "email":"${email}", "message": "${message}"} ]}`;
+      fs.writeFileSync(dbPathFile, dbTextContent);
 
-  } else {
-    console.log('File Created');
-    fs.writeFileSync(dbPath, `{"Users":[{"name":"${name}", "email":"${email}", "message": "${message}"}]}`);
+    } else {
+      console.log('File Created');
+      fs.writeFileSync(dbPathFile, `{"Users":[{"name":"${name}", "email":"${email}", "message": "${message}"}]}`);
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
-module.exports.saveLogin  = function (email, password){
+module.exports.saveLogin = function (email, password) {
+  try {
+    const dbFolder = path.join(process.cwd(), 'db');
+    const dbPathFile = path.join(dbFolder, 'login.json');
 
+    console.log('DbFolder', dbFolder);
+    if (!fs.existsSync(dbFolder)) {
+      fs.mkdirSync(dbFolder);
+    }
+    if (fs.existsSync(dbPathFile)) {
+      // если файлик существует, то надо дописать
+      console.log('File Appended');
+
+      const fileContent = fs.readFileSync(dbPathFile, 'utf8');
+      if (fileContent === '') {
+        fs.writeFileSync(dbPathFile, `{"Logins":[{"email":"${email}", "password": "${password}"}]}`);
+        return;
+      }
+      const dbEntity = JSON.parse(fs.readFileSync(dbPathFile, 'utf8'));
+      let dbTextContent = '{"Logins":[';
+      Array.from(dbEntity['Logins']).map(item => {
+        dbTextContent += `{"email":"${item.email}", "password": "${item.password}"},`;
+      });
+
+      dbTextContent += `{"email":"${email}", "password": "${password}"} ]}`;
+      fs.writeFileSync(dbPathFile, dbTextContent);
+
+    } else {
+      console.log('File Created');
+      fs.writeFileSync(dbPathFile, `{"Logins":[{ "email":"${email}", "password": "${password}"}]}`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 
+module.exports.readFromSkills = function () {
+  const temp = skillsWorker.read();   
+  return temp;
+}
+module.exports.skillsAdd = function (age, concerts, cities, year) {
+  skillsWorker.add(age, concerts, cities, year);
+}
+
+module.exports.uploadAdd = function (fileName, name, price) {
+  console.log('Run middleware');
+  uploader.upload(fileName, name, price);
+}
+
+module.exports.uploadRead = function(){
+  const res = uploader.read();
+  return res;
+}
 

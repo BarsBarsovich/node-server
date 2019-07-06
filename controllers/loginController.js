@@ -1,8 +1,17 @@
-module.exports.get = function(req, res){
-  res.render('pages/login', {title: 'Login'});
-}
+const dbWorker = require('../models/dbworker');
 
-module.exports.post = function(req, res){
-  console.log('Name', req.body.name);
-  res.end();
+module.exports.saveLogin = function ({ email, password }) {
+  return new Promise((resolve, reject) => {
+    try {
+      dbWorker.saveLogin(email, password);
+
+      if (email === 'kek@kek.kek' && password === '123') {
+        resolve();
+      } else {
+        reject('Invalid login');
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
