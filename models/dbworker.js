@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const skillsWorker = require('./skillWorker');
+const uploader = require('./uploaderWorker');
 
 module.exports.saveMessage = function (name, email, message) {
   try {
@@ -11,9 +13,7 @@ module.exports.saveMessage = function (name, email, message) {
       fs.mkdirSync(dbFolder);
     }
     if (fs.existsSync(dbPathFile)) {
-      // если файлик существует, то надо дописать
-      console.log('File Appended');
-
+      // если файлик существует, то надо дописать    
       const fileContent = fs.readFileSync(dbPathFile, 'utf8');
       if (fileContent === '') {
         fs.writeFileSync(dbPathFile, `{"Users":[{"name":"${name}", "email":"${email}", "message": "${message}"}]}`);
@@ -73,45 +73,21 @@ module.exports.saveLogin = function (email, password) {
   }
 }
 
-module.exports.uploadAdd = function (pathToFile, name, price) {
-
+module.exports.readFromSkills = function () {
+  const temp = skillsWorker.read();   
+  return temp;
 }
-
 module.exports.skillsAdd = function (age, concerts, cities, year) {
-  try {
-    const dbFolder = path.join(process.cwd(), 'db');
-    const dbPathFile = path.join(dbFolder, 'skills.json');
-
-    console.log('DbFolder', dbFolder);
-    if (!fs.existsSync(dbFolder)) {
-      fs.mkdirSync(dbFolder);
-    }
-    if (fs.existsSync(dbPathFile)) {
-      // если файлик существует, то надо дописать
-      console.log('File Appended');
-
-      const fileContent = fs.readFileSync(dbPathFile, 'utf8');
-      if (fileContent === '') {
-        fs.writeFileSync(dbPathFile,
-          `{"Skills":[{"age":"${age}", "concerts": "${concerts}", "cities":"${cities}", "year":"${year}"}]}`);
-        return;
-      }
-      const dbEntity = JSON.parse(fs.readFileSync(dbPathFile, 'utf8'));
-      let dbTextContent = '{"Skills":[';
-      Array.from(dbEntity['Skills']).map(item => {
-        dbTextContent += `{"age":"${item.age}", "concerts": "${item.concerts}", "cities":"${item.cities}", "year":"${item.year}"},`;
-      });
-
-      dbTextContent += `{"age":"${age}", "concerts": "${concerts}", "cities":"${cities}", "year":"${year}"} ]}`;
-      fs.writeFileSync(dbPathFile, dbTextContent);
-
-    } else {
-      console.log('File Created');
-      fs.writeFileSync(dbPathFile, `{"Skills":[{"age":"${age}", "concerts": "${concerts}", "cities":"${cities}", "year":"${year}"}]}`);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  skillsWorker.add(age, concerts, cities, year);
 }
 
+module.exports.uploadAdd = function (fileName, name, price) {
+  console.log('Run middleware');
+  uploader.upload(fileName, name, price);
+}
+
+module.exports.uploadRead = function(){
+  const res = uploader.read();
+  return res;
+}
 

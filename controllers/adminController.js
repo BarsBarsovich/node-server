@@ -1,6 +1,4 @@
 const dbWorker = require('../models/dbworker');
-const uuid = require('uuid');
-const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
 
@@ -20,7 +18,8 @@ module.exports.upload =  (files,name, price)=>{
         return;
       }
 
-      fs.renameSync(tempPath, path.join(uploadDir, fileName));    
+      fs.renameSync(tempPath, path.join(uploadDir, fileName));
+      dbWorker.uploadAdd(fileName, name, price);          
       resolve();
     }catch(err){
       reject(err);
