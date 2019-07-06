@@ -1,10 +1,19 @@
 const db = require('../models/dbworker');
 module.exports.get = function (req, res) {
-  res.render('pages\index', {title: 'main'})
+  const dbFile = JSON.parse(db.readFromSkills());
+  const productsFile = JSON.parse(db.uploadRead());
+  console.log(productsFile.products);
+  res.render('pages/index', {
+    title: 'main',
+    skills: dbFile.skills,
+    products: productsFile.products
+  })
 }
 
-module.exports.post = function (req, res) {
-  const {name, email, message} = req.body;
+module.exports.post = function (req, res, next) {
+  const { name, email, message } = req.body;
   db.saveMessage(name, email, message);
-  res.end();
+  req.flash('status', 'bench');
+  // res.redirect(req.get('referer'));
+  next();
 }

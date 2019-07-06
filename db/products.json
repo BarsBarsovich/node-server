@@ -1,0 +1,29 @@
+{
+    "products": [
+        {
+            "src": "./upload/logo.png",
+            "name": "Папуас",
+            "price": "600"
+        },
+        {
+            "src": "./upload/logo_header.png",
+            "name": "Афродита",
+            "price": "500"
+        },
+        {
+            "src": "./upload/logo_header_hover.png",
+            "name": "Картошка",
+            "price": "700"
+        },
+        {
+            "src": "./upload/logo_header_hover.png",
+            "name": "undefined",
+            "price": "undefined"
+        },
+        {
+            "src": "./upload/logo_header.png",
+            "name": "undefined",
+            "price": "undefined"
+        }
+    ]
+}

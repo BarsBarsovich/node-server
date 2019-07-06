@@ -1,0 +1,19 @@
+{
+    "Users": [
+        {
+            "name": "1",
+            "email": "kek@kek.kek",
+            "message": "1"
+        },
+        {
+            "name": "2",
+            "email": "boris.dryabin@gmail.com",
+            "message": "2"
+        },
+        {
+            "name": "3",
+            "email": "test@test.ru",
+            "message": "3"
+        }
+    ]
+}
